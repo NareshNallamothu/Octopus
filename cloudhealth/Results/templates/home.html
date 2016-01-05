@@ -1,0 +1,13 @@
+<div>
+    <h1><a href="/">tempest report</a></h1>
+</div>
+
+{% for post in data %}
+    <div>
+        <p style="color:red;">testcasename: {{ post.classname }}</p>
+       <!-- <h1><a href="">{{ post.classname }}</a></h1> -->
+        <p>modulename: {{ post.name }}</p>
+        <p>failure: {{post.failure }}</p>
+        <p>skipped: {{post.skipped }}</p>
+    </div>
+{% endfor %}
