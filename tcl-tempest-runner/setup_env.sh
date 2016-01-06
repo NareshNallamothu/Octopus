@@ -76,7 +76,7 @@ local compute_ip="$(ssh $1 "fuel --env-id $env_id  node list | grep compute | aw
     COMPUTE_HOST=${compute_ip}
     message "Compute host is '${COMPUTE_HOST}'"
 
-    FUEL_RELEASE="$(ssh 'fuel --fuel-version 2>&1 | grep -e ^release:' | awk '{print $2}' | sed "s/'//g")"
+    FUEL_RELEASE="$(ssh $1 'fuel --fuel-version 2>&1 | grep -e ^release:' | awk '{print $2}' | sed "s/'//g")"
     message "Fuel release is ${FUEL_RELEASE}"
 
    OS_PUBLIC_AUTH_URL="$(ssh $1 "ssh ${controller_ip} '. openrc; keystone catalog --service identity 2>/dev/null | grep publicURL'" | awk '{print $4}')"
@@ -204,8 +204,8 @@ install_tempest() {
     cp ${TOP_DIR}/tempest/run_tests.sh ${VIRTUALENV_DIR}/bin/run_tests
     cp -r ${TOP_DIR}/shouldfail ${DEST}
     cd ${DEST}
-    tempest init env-$2
-   # cd env-$2
+    mkdir -p  env-$2
+    cd env-$2
     #mkdir -p ${TEMPEST_REPORTS_DIR}
 
     message "Downloading necessary resources for Tempest"

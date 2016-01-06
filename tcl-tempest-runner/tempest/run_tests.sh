@@ -61,12 +61,36 @@ collect_results() {
         local subunit="$(mktemp)"
         subunit-1to2 < .testrepository/${SUBUNIT_STREAM} | ${TOP_DIR}/subunit-shouldfail-filter --shouldfail-file=${SHOULDFAIL_FILE} > ${subunit}
         ${TOP_DIR}/subunit-html < ${subunit} > ${DEST}/$1/logs/tempest-report.html
-        subunit2junitxml < ${subunit} > ${DEST}/$1/tempest-report.xml
+        subunit2junitxml < ${subunit} > ${DEST}/$1/tempest-${USER_NAME}-$1-report.xml
         cp ${DEST}/tempest/etc/tempest.conf ${DEST}/$1/
+        cp ${DEST}/$1/tempest-${USER_NAME}-$1-report.xml ${DEST}/
         cat ${SHOULDFAIL_FILE} > ${DEST}/$1/shouldfail.yaml
     else
         error "Subunit stream ${SUBUNIT_STREAM} is not found"
     fi
+}
+
+resource_clean(){
+
+    keystone user-role-remove --role SwiftOperator --user demo --tenant demo 2>/dev/null || true
+    keystone  user-role-remove --role anotherrole --user demo --tenant demo 2>/dev/null || true
+    keystone_adm user-role-remove --role admin --user admin --tenant demo 2>/dev/null || true
+
+    keystone role-delete SwiftOperator 2>/dev/null || true
+    keystone role-delete anotherrole 2>/dev/null || true
+    keystone role-delete heat_stack_user 2>/dev/null || true
+    keystone role-delete heat_stack_owner 2>/dev/null || true
+    keystoneadm role-delete ResellerAdmin 2>/dev/null || true
+
+    keystone user-delete demo 2>/dev/null || true
+    keystone tenant-delete demo 2>/dev/null || true
+
+    message "Delete the created flavors"
+     nova flavor-delete m1.tempest-nano || true
+     nova flavor-delete m1.tempest-micro || true
+
+    message "Delete the uploaded CirrOS image"
+     glance image-delete cirros-${CIRROS_VERSION}-x86_64 || true
 }
 
 run() {
@@ -79,7 +103,9 @@ run() {
     configure_shouldfail_file
 
     run_tests "$@"
-    collect_results "$@"
+    collect_results "$@" 
+
+    resource_clean "$@"
 
     cd ${TOP_DIR}
 }

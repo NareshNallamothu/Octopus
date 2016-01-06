@@ -14,33 +14,8 @@ check_service_availability() {
 }
 
 init_some_config_options() {
-    IS_NEUTRON_AVAILABLE=$(check_service_availability "neutron")
-    if [ "${IS_NEUTRON_AVAILABLE}" = "true" ]; then
-        PUBLIC_NETWORK_ID="$(neutron net-list --router:external=true -f csv -c id --quote none 2>/dev/null | tail -1)"
-        PUBLIC_ROUTER_ID="$(neutron router-list --external_gateway_info:network_id=${PUBLIC_NETWORK_ID} -F id -f csv --quote none 2>/dev/null | tail -1)"
-         message "tests"
-    fi
 
-    IMAGE_REF="$(glance image-list 2>/dev/null | grep cirros-${CIRROS_VERSION}-x86_64 | awk '{print $2}')"
-    IMAGE_REF_ALT="$(glance image-list 2>/dev/null | grep TestVM | awk '{print $2}')"
-
-   # OS_EC2_URL="$(keystone catalog --service ec2 2>/dev/null | grep publicURL | awk '{print $4}')"
-   # OS_S3_URL="$(keystone catalog --service s3 2>/dev/null | grep publicURL | awk '{print $4}')"
-    message "${IMAGE_REF}"
-    
-    ATTACH_ENCRYPTED_VOLUME="true"
-    VOLUMES_STORAGE_PROTOCOL="iSCSI"
-    VOLUMES_BACKUP="false"
-
-   # local volume_driver="$(ssh ${CONTROLLER_HOST} "cat /etc/cinder/cinder.conf | grep volume_driver" 2>/dev/null)"
-   # if [ "$(echo ${volume_driver} | grep -o RBDDriver)" ]; then
-   #     ATTACH_ENCRYPTED_VOLUME="false"
-   #     VOLUMES_STORAGE_PROTOCOL="ceph"
-        # In MOS 7.0 volumes backup works only if the volumes storage protocol is Ceph
-   #     VOLUMES_BACKUP="true"
-   # fi
-
-    message "Create needed tenant and roles for Tempest tests"
+ message "Create needed tenant and roles for Tempest tests"
     keystone tenant-create --name demo 2>/dev/null || true
     keystone user-create --tenant demo --name demo --pass demo 2>/dev/null || true
 
@@ -58,6 +33,48 @@ init_some_config_options() {
     nova flavor-create m1.tempest-nano 0 64 0 1 2>/dev/null || true
     message "Create flavor 'm1.tempest-micro' for Tempest tests"
     nova flavor-create m1.tempest-micro 42 128 0 1 2>/dev/null || true
+
+    local cirros_image="$(glance image-list 2>/dev/null | grep cirros-${CIRROS_VERSION}-x86_64)"
+     if [ ! "${cirros_image}" ]; then
+       # scp ${VIRTUALENV_DIR}/files/cirros-${CIRROS_VERSION}-x86_64-disk.img ${USER_NAME}:/tmp/cirros-${CIRROS_VERSION}-x86_64-disk.img
+       # ssh ${USER_NAME} "scp /tmp/cirros-${CIRROS_VERSION}-x86_64-disk.img ${CONTROLLER_HOST}:/tmp/"
+         if [ $(echo $FUEL_RELEASE | awk -F'.' '{print $1}') -ge "8" ]; then
+             glance image-create --name cirros-${CIRROS_VERSION}-x86_64 --file ${VIRTUALENV_DIR}/files/cirros-${CIRROS_VERSION}-x86_64-disk.img --disk-format qcow2 --container-format bare --visibility public --progress 2>/dev/null || true
+         else
+             glance image-create --name cirros-${CIRROS_VERSION}-x86_64 --file ${VIRTUALENV_DIR}/files/cirros-${CIRROS_VERSION}-x86_64-disk.img --disk-format qcow2 --container-format bare --is-public=true --progress 2>/dev/null || true
+         fi
+     else
+         message "CirrOS image for Tempest tests already uploaded!"
+     fi
+
+    
+    IS_NEUTRON_AVAILABLE=$(check_service_availability "neutron")
+    if [ "${IS_NEUTRON_AVAILABLE}" = "true" ]; then
+        PUBLIC_NETWORK_ID="$(neutron net-list --router:external=true -f csv -c id --quote none 2>/dev/null | tail -1)"
+        PUBLIC_ROUTER_ID="$(neutron router-list --external_gateway_info:network_id=${PUBLIC_NETWORK_ID} -F id -f csv --quote none 2>/dev/null | tail -1)"
+         message "tests"
+    fi
+
+    IMAGE_REF="$(glance image-list 2>/dev/null | grep cirros-${CIRROS_VERSION}-x86_64 | awk '{print $2}')"
+    IMAGE_REF_ALT="$(glance image-list 2>/dev/null | grep TestVM | awk '{print $2}')"
+    ADMIN_TENANT_ID="$(keystone tenant-list 2>/dev/null | grep admin | awk '{print $2}')"
+
+   # OS_EC2_URL="$(keystone catalog --service ec2 2>/dev/null | grep publicURL | awk '{print $4}')"
+   # OS_S3_URL="$(keystone catalog --service s3 2>/dev/null | grep publicURL | awk '{print $4}')"
+    message "${IMAGE_REF}"
+    
+    ATTACH_ENCRYPTED_VOLUME="true"
+    VOLUMES_STORAGE_PROTOCOL="iSCSI"
+    VOLUMES_BACKUP="false"
+
+   # local volume_driver="$(ssh ${CONTROLLER_HOST} "cat /etc/cinder/cinder.conf | grep volume_driver" 2>/dev/null)"
+   # if [ "$(echo ${volume_driver} | grep -o RBDDriver)" ]; then
+   #     ATTACH_ENCRYPTED_VOLUME="false"
+   #     VOLUMES_STORAGE_PROTOCOL="ceph"
+        # In MOS 7.0 volumes backup works only if the volumes storage protocol is Ceph
+   #     VOLUMES_BACKUP="true"
+   # fi
+
 
 }
 
