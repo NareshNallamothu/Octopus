@@ -12,10 +12,10 @@ check_service_availability() {
         echo "true"
     fi
 }
+resource_create(){
 
-init_some_config_options() {
 
- message "Create needed tenant and roles for Tempest tests"
+message "Create needed tenant and roles for Tempest tests"
     keystone tenant-create --name demo 2>/dev/null || true
     keystone user-create --tenant demo --name demo --pass demo 2>/dev/null || true
 
@@ -34,7 +34,7 @@ init_some_config_options() {
     message "Create flavor 'm1.tempest-micro' for Tempest tests"
     nova flavor-create m1.tempest-micro 42 128 0 1 2>/dev/null || true
 
-    local cirros_image="$(glance image-list 2>/dev/null | grep cirros-${CIRROS_VERSION}-x86_64)"
+   local cirros_image="$(glance image-list 2>/dev/null | grep cirros-${CIRROS_VERSION}-x86_64)"
      if [ ! "${cirros_image}" ]; then
        # scp ${VIRTUALENV_DIR}/files/cirros-${CIRROS_VERSION}-x86_64-disk.img ${USER_NAME}:/tmp/cirros-${CIRROS_VERSION}-x86_64-disk.img
        # ssh ${USER_NAME} "scp /tmp/cirros-${CIRROS_VERSION}-x86_64-disk.img ${CONTROLLER_HOST}:/tmp/"
@@ -47,7 +47,9 @@ init_some_config_options() {
          message "CirrOS image for Tempest tests already uploaded!"
      fi
 
-    
+}
+init_some_config_options() {
+
     IS_NEUTRON_AVAILABLE=$(check_service_availability "neutron")
     if [ "${IS_NEUTRON_AVAILABLE}" = "true" ]; then
         PUBLIC_NETWORK_ID="$(neutron net-list --router:external=true -f csv -c id --quote none 2>/dev/null | tail -1)"
@@ -80,6 +82,7 @@ init_some_config_options() {
 
 create_config_file() {
     local tempest_conf="${DEST}/$1/etc/tempest.conf"
+    resource_create
     if [ -f ${tempest_conf} ]; then
         message "Tempest config file already exists!"
     else

@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+LOGIN_URL='/login/'
+ADMIN_SITE_HEADER = "Tata Cloud/Datacenter Testsite  administration"
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'accounts',
     'Results'
 ]
 
@@ -69,8 +72,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'cloudhealth.wsgi.application'
 
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+#     'django.template.loaders.eggs.Loader',
+)
+WSGI_APPLICATION = 'cloudhealth.wsgi.application'
+SITE_ID = 1
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases

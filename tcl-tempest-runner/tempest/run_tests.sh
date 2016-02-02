@@ -59,11 +59,12 @@ run_tests() {
 collect_results() {
     if [ -f .testrepository/${SUBUNIT_STREAM} ] ; then
         local subunit="$(mktemp)"
+        local now=$(date +"%Y%m%d-%H:%M:%S")
         subunit-1to2 < .testrepository/${SUBUNIT_STREAM} | ${TOP_DIR}/subunit-shouldfail-filter --shouldfail-file=${SHOULDFAIL_FILE} > ${subunit}
         ${TOP_DIR}/subunit-html < ${subunit} > ${DEST}/$1/logs/tempest-report.html
-        subunit2junitxml < ${subunit} > ${DEST}/$1/tempest-${USER_NAME}-$1-report.xml
+        subunit2junitxml < ${subunit} > ${DEST}/$1/tempest-${USER_NAME}-$1-${now}-report.xml
         cp ${DEST}/tempest/etc/tempest.conf ${DEST}/$1/
-        cp ${DEST}/$1/tempest-${USER_NAME}-$1-report.xml ${DEST}/
+        sudo cp ${DEST}/$1/tempest-${USER_NAME}-$1-${now}-report.xml /home/tempest/
         cat ${SHOULDFAIL_FILE} > ${DEST}/$1/shouldfail.yaml
     else
         error "Subunit stream ${SUBUNIT_STREAM} is not found"

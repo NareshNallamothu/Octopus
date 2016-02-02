@@ -17,8 +17,13 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+from django.contrib.auth import views as auth_views
 import Results.views
+from . import settings
+admin.site.site_header = settings.ADMIN_SITE_HEADER
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$',Results.views.tempest_report),
+    url(r'^$',Results.views.locations_report),
+    url(r'^testresults',Results.views.testresults_report),
+    url(r'^login', auth_views.login,{'template_name': 'login.html'}),
 ]

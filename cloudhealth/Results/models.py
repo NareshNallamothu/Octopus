@@ -12,8 +12,8 @@ from django.db import models
 
 class Tempestresults(models.Model):
     id = models.IntegerField(primary_key=True)
-    classname = models.CharField(max_length=-1, blank=True, null=True)
-    name = models.CharField(max_length=-1, blank=True, null=True)
+    classname = models.CharField(max_length=1024, blank=True, null=True)
+    name = models.CharField(max_length=1024, blank=True, null=True)
     time = models.FloatField(blank=True, null=True)
     failure = models.TextField(blank=True, null=True)
     skipped = models.TextField(blank=True, null=True)
@@ -21,3 +21,50 @@ class Tempestresults(models.Model):
     class Meta:
         managed = False
         db_table = 'tempestresults'
+
+class Locations(models.Model):
+    id = models.IntegerField(primary_key=True)
+    location = models.CharField(max_length=1024,blank=True,null=True)
+    executionid = models.CharField(max_length=1024,blank=True,null=True)
+ 
+    class Meta:
+        managed = False
+        db_table = 'locations'
+
+class Executiondetails(models.Model):
+    id = models.CharField(max_length=1024,primary_key=True)
+    testsuitename = models.CharField(max_length=1024,blank=True,null=True)
+    executiontime = models.CharField(max_length=1024,blank=True,null=True)
+    executiontype = models.CharField(max_length=1024,blank=True,null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'executiondetails'
+
+class TestDetails(models.Model):
+    id = models.IntegerField(primary_key=True)
+    module = models.CharField(max_length=1024,blank=True,null=True)
+    classname = models.CharField(max_length=1024,blank=True,null=True)
+    methodname = models.CharField(max_length=1024,blank=True,null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'testdetails'
+
+class Testresults(models.Model):
+    id = models.IntegerField(primary_key=True)
+    time = models.FloatField(blank=True, null=True)
+    result = models.CharField(max_length=1024, blank=True, null=True)
+    failure = models.TextField(blank=True, null=True)
+    skipped = models.TextField(blank=True, null=True)
+    exe_id = models.CharField(max_length=1024, blank=True, null=True)
+    env_id = models.CharField(max_length=1024, blank=True, null=True)
+
+
+    class Meta:
+        managed = False
+        db_table = 'testresults'
+
+
+
+

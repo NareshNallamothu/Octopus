@@ -102,7 +102,7 @@ configure_env() {
     message "Create and configure environment"
    USER_NAME=$1
 #sh $1 "ssh ${controller_ip} 'grep -w public_vip /etc/hiera/globals.yaml'" | awk '{print $1}' | sed 's/\"//g')"
-    id -u ${USER_NAME} &>/dev/null || useradd -m ${USER_NAME}
+    id -u ${USER_NAME} &>/dev/null || sudo adduser ${USER_NAME} sudo 
     grep nofile /etc/security/limits.conf || echo '* soft nofile 50000' >> /etc/security/limits.conf ; echo '* hard nofile 50000' >> /etc/security/limits.conf
 
     mkdir -p ${DEST}
@@ -290,12 +290,8 @@ prepare_cloud() {
         message "Keystone endpoints already public!"
     else
        local old_endpoint="$(ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone endpoint-list  2>/dev/null | grep ${identity_service_id}'" | awk '{print $2}')"
-       ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone endpoint--create --region RegionOne --service ${identity_service_id} --publicurl ${OS_PUBLIC_AUTH_URL} --adminurl ${OS_PUBLIC_AUTH_URL/5000/35357} --internalurl ${internal_url}  2>/dev/null' "
+       ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone endpoint-create --region RegionOne --service ${identity_service_id} --publicurl ${OS_PUBLIC_AUTH_URL} --adminurl ${OS_PUBLIC_AUTH_URL/5000/35357} --internalurl ${internal_url}  2>/dev/null' "
       ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone endpoint-delete ${old_endpoint} 2>/dev/null' "
-
-      #  local old_endpoint="$(remote_cli "keystone endpoint-list 2>/dev/null | grep ${identity_service_id} | awk '{print \$2}'")"
-#        remote_cli "keystone endpoint-create --region RegionOne --service ${identity_service_id} --publicurl ${OS_PUBLIC_AUTH_URL} --adminurl ${OS_PUBLIC_AUTH_URL/5000/35357} --internalurl ${internal_url} 2>/dev/null"
-     #   remote_cli "keystone endpoint-delete ${old_endpoint} 2>/dev/null"
     fi
 
     message "Create needed tenant and roles for Tempest tests"
