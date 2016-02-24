@@ -1,0 +1,22 @@
+<div>
+    <h1><a href="/">Test Execution Details for this location</a></h1>
+</div>
+
+{% for post in data %}
+    <div>
+        <!--p style="color:red;">TestID: {{ post.id }} &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+        time: {{ post.time }}&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        result :  {{ post.result }}&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        failure :  {{ post.failure }}&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        skipped :  {{ post.skipped }}&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        executionid :  {{ post.exe_id }}&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+     </p-->
+      <table style="width:100%">
+  <tr>
+    <td>{{ post.time }}</td>
+    <td>{{ post.result }}</td>		
+    <td>{{ post.failure }} style="white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word"</td>
+  </tr>
+</table>
+     </div>
+{% endfor %}

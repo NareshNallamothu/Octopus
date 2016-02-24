@@ -1,0 +1,38 @@
+{%extends 'base.html' %}
+{% block title %}Log in{% endblock %}
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/signin.css" />
+{% endblock %}
+{% block content %}
+  <form action="" class="form-signin" method="post">{% csrf_token %}
+      <h3 class="form-signin-heading text-center">Please log in</h3>
+      {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors|striptags }}
+          </div>
+      {% endif %}
+      {% if not form.username.errors %}
+        <input id="id_username" name="username" type="text" class="form-control" placeholder="Username (admin)" autofocus>
+      {% else %}
+        <div class="form-group has-error">
+          {% for error in form.username.errors %}
+            <label class="control-label" for="id_username">{{ error }}</label>
+          {% endfor %}
+          <input id="id_username" name="username" type="text" class="form-control" placeholder="Username (admin)" autofocus>
+        </div>
+      {% endif %}
+      {% if not form.password.errors %}
+        <input id="id_password" name="password" type="text" class="form-control" placeholder="Password (admin)" autofocus>
+      {% else %}
+        <div class="form-group has-error">
+          {% for error in form.password.errors %}
+            <label class="control-label" for="id_password">{{ error }}</label>
+          {% endfor %}
+          <input id="id_password" name="password" type="text" class="form-control" placeholder="Password (admin)">
+        </div>
+      {% endif %}
+
+ <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    </form>
+  </form>
+{% endblock %}

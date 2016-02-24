@@ -1,0 +1,16 @@
+<div>
+    <h1><a href="/">Test Execution Details for this location</a></h1>
+</div>
+
+{% for post in data %}
+    <div>
+        <p style="color:red;">Executionid: {{ post.executionid }} &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+       <!-- <h1><a href="">{{ post.classname }}</a></h1> -->
+        <!--p>Executionid: {{ post.executionid }}</p-->
+        Testsuitename: {{ post.testsuitename }} &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        Executiontime: {{ post.executiontime }} &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        Executiontype: {{ post.executiontype }} &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+
+     </p>
+     </div>
+{% endfor %}

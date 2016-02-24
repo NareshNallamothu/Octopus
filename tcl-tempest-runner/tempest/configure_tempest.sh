@@ -96,19 +96,19 @@ use_stderr = False
 lock_path = /tmp
 
 [compute]
-fixed_network_name = private
+fixed_network_name = net04
 ssh_connect_method = fixed
 flavor_ref_alt = 2
 flavor_ref = 1
 image_alt_ssh_user = cirros
-image_ref_alt = ${IMAGE_REF}
+image_ref_alt = ${IMAGE_REF_ALT}
 image_ssh_user = cirros
 image_ref = ${IMAGE_REF}
 ssh_timeout = 196
 ip_version_for_ssh = 4
 network_for_ssh = private
 ssh_user = cirros
-allow_tenant_isolation = True
+allow_tenant_isolation = False
 build_timeout = 196
 
 [volume]
@@ -139,6 +139,7 @@ xml_api = True
 
 [auth]
 tempest_roles = anotherrole
+use_dynamic_credentials = False
 
 [compute-feature-enabled]
 ec2_api = False
@@ -152,22 +153,19 @@ resize = True
 [compute-feature-disabled]
 api_extensions =
 
-[compute-admin]
-tenant_name = admin
-password = admin
-username = admin
 
 [network]
-default_network = 10.0.0.0/24
-public_router_id =
+catalog_type = network
+tenant_network_cidr = 10.21.5.0/8
 public_network_id = ${PUBLIC_NETWORK_ID}
 tenant_networks_reachable = false
+floating_network_name = net04_ext
 api_version = 2.0
 
 
 [network-feature-enabled]
 xml_api = True
-api_extensions = agent, allowed-address-pairs, binding, dhcp_agent_scheduler, dvr, ext-gw-mode, external-net, extra_dhcp_opt, extraroute, fwaas, l3-ha, l3_agent_scheduler, lbaas, lbaas_agent_scheduler, metering, multi-provider, provider, quotas, router, security-group, service-type, vpnaas
+api_extensions = all
 ipv6_subnet_attributes = True
 ipv6 = True
 
@@ -191,6 +189,11 @@ flavor-regex = ^m1.tempest-nano$
 
 [telemetry]
 too_slow_to_test = False
+
+[validation]
+run_validation = true
+connect_method = floating
+ping_timeout = 60
 
 [object-storage-feature-enabled]
 discoverable_apis = account_quotas, bulk_delete, bulk_upload, container_quotas, container_sync, crossdomain, formpost, keystoneauth, ratelimit, slo, staticweb, tempauth, tempurl

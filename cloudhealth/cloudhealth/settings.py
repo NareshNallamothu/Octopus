@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 LOGIN_URL='/login/'
+LOGIN_REDIRECT_URL='/'
 ADMIN_SITE_HEADER = "Tata Cloud/Datacenter Testsite  administration"
 # Application definition
 

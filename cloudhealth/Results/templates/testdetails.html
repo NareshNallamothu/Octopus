@@ -1,0 +1,14 @@
+<div>
+    <h1><a href="/">Test Case Details</a></h1>
+</div>
+
+{% for post in data %}
+    <div>
+        <p style="color:red;">TestID: {{ post.id }} &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+       <!-- <h1><a href="">{{ post.classname }}</a></h1> -->
+        <!--p>Executionid: {{ post.executionid }}</p-->
+         Modulename: {{ post.module }} &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+         Classname: {{ post.classname }} &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+     </p>
+     </div>
+{% endfor %}

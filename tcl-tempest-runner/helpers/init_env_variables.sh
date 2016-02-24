@@ -19,6 +19,8 @@ KEYSTONE_HAPROXY_CONFIG_PATH="${KEYSTONE_HAPROXY_CONFIG_PATH:-/etc/haproxy/conf.
 
 # Tempest commit ID from Sep 9, 2015.
 default_tempest_commit_id="d05a3c26cd1b492c0466737972ea05d339f224d6"
+#default_tempest_commit_id="4971fc8e6f9b168b2a892a9661085b4199f9ec66"
+#default_tempest_commit_id="45dcf1115b87aff2c4c3b132f7422a46d783439e"
 TEMPEST_COMMIT_ID="${TEMPEST_COMMIT_ID:-${default_tempest_commit_id}}"
 
 # TLS related options

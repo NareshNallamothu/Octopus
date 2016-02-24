@@ -128,7 +128,7 @@ else
 fi
 cd ${DEST}
 source ${VIRTUALENV_DIR}/bin/activate
-source ${USER_HOME_DIR}/openrc
+source ${USER_HOME_DIR}/openrc-$2
 EOF
 
     # vimrc
@@ -157,20 +157,20 @@ EOF
 
     # openrc
 #    scp ${CONTROLLER_HOST}:/root/openrc ${USER_HOME_DIR}/openrc
-    ssh $1 "scp ${CONTROLLER_HOST}:/root/openrc /tmp/openrc"
-    scp $1:/tmp/openrc ${USER_HOME_DIR}/openrc
-    sed -i "/LC_ALL.*/d" ${USER_HOME_DIR}/openrc
-    sed -i "/OS_AUTH_URL.*/d" ${USER_HOME_DIR}/openrc
-    sed -i "s/internalURL/publicURL/g" ${USER_HOME_DIR}/openrc
-    echo "export FUEL_RELEASE='${FUEL_RELEASE}'" >> ${USER_HOME_DIR}/openrc
-    echo "export CONTROLLER_HOST='${CONTROLLER_HOST}'" >> ${USER_HOME_DIR}/openrc
-    echo "export COMPUTE_HOST='${COMPUTE_HOST}'" >> ${USER_HOME_DIR}/openrc
-    echo "export OS_AUTH_URL='${OS_PUBLIC_AUTH_URL}'" >> ${USER_HOME_DIR}/openrc
-    echo "export OS_PUBLIC_IP='${OS_PUBLIC_IP}'" >> ${USER_HOME_DIR}/openrc
-    echo "export USER_NAME='${USER_NAME}'" >> ${USER_HOME_DIR}/openrc
+    ssh $1 "scp ${CONTROLLER_HOST}:/root/openrc /tmp/openrc-$2"
+    scp $1:/tmp/openrc-$2 ${USER_HOME_DIR}/openrc-$2
+    sed -i "/LC_ALL.*/d" ${USER_HOME_DIR}/openrc-$2
+    sed -i "/OS_AUTH_URL.*/d" ${USER_HOME_DIR}/openrc-$2
+    sed -i "s/internalURL/publicURL/g" ${USER_HOME_DIR}/openrc-$2
+    echo "export FUEL_RELEASE='${FUEL_RELEASE}'" >> ${USER_HOME_DIR}/openrc-$2
+    echo "export CONTROLLER_HOST='${CONTROLLER_HOST}'" >> ${USER_HOME_DIR}/openrc-$2
+    echo "export COMPUTE_HOST='${COMPUTE_HOST}'" >> ${USER_HOME_DIR}/openrc-$2
+    echo "export OS_AUTH_URL='${OS_PUBLIC_AUTH_URL}'" >> ${USER_HOME_DIR}/openrc-$2
+    echo "export OS_PUBLIC_IP='${OS_PUBLIC_IP}'" >> ${USER_HOME_DIR}/openrc-$2
+    echo "export USER_NAME='${USER_NAME}'" >> ${USER_HOME_DIR}/openrc-$2
     if [ "${TLS_ENABLED}" = "yes" ]; then
         scp ${CONTROLLER_HOST}:${REMOTE_CA_CERT} ${LOCAL_CA_CERT}
-        echo "export OS_CACERT='${LOCAL_CA_CERT}'" >> ${USER_HOME_DIR}/openrc
+        echo "export OS_CACERT='${LOCAL_CA_CERT}'" >> ${USER_HOME_DIR}/openrc-$2
     fi
 
     chown -R ${USER_NAME} ${USER_HOME_DIR}
@@ -178,7 +178,7 @@ EOF
 
 setup_virtualenv() {
     message "Setup virtualenv in ${VIRTUALENV_DIR}"
-    virtualenv -p python2.7 ${VIRTUALENV_DIR}
+#    virtualenv -p python2.7 ${VIRTUALENV_DIR}
 }
 
 install_tempest() {
@@ -186,14 +186,14 @@ install_tempest() {
 
     cd ${DEST}
     local tempest_dir="${DEST}/tempest"
-   # rm -rf ${tempest_dir}
-   if [ -d ${tempest_dir}];then
+    rm -rf ${tempest_dir}
+#   if [ ! -d ${tempest_dir}];then
        git clone git://git.openstack.org/openstack/tempest.git
-   fi
+ #  fi
     cd ${tempest_dir}
-    if [ "${TEMPEST_COMMIT_ID}" != "master" ]; then
-        git checkout ${TEMPEST_COMMIT_ID}
-    fi
+#    if [ "${TEMPEST_COMMIT_ID}" != "master" ]; then
+#        git checkout ${TEMPEST_COMMIT_ID}
+#    fi
 
     ${VIRTUALENV_DIR}/bin/pip install -U -r ${tempest_dir}/requirements.txt
     message "Tempest has been installed into ${tempest_dir}"

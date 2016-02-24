@@ -23,7 +23,9 @@ from . import settings
 admin.site.site_header = settings.ADMIN_SITE_HEADER
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^login', auth_views.login,{'template_name': 'login.html'}),
     url(r'^$',Results.views.locations_report),
     url(r'^testresults',Results.views.testresults_report),
-    url(r'^login', auth_views.login,{'template_name': 'login.html'}),
+    url(r'^testdetails',Results.views.testdetails_report),
+    url(r'^exedetails',Results.views.executiondetails_report),
 ]

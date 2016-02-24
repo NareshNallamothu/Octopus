@@ -32,7 +32,7 @@ class Locations(models.Model):
         db_table = 'locations'
 
 class Executiondetails(models.Model):
-    id = models.CharField(max_length=1024,primary_key=True)
+    executionid = models.CharField(max_length=1024,primary_key=True)
     testsuitename = models.CharField(max_length=1024,blank=True,null=True)
     executiontime = models.CharField(max_length=1024,blank=True,null=True)
     executiontype = models.CharField(max_length=1024,blank=True,null=True)
@@ -41,7 +41,7 @@ class Executiondetails(models.Model):
         managed = False
         db_table = 'executiondetails'
 
-class TestDetails(models.Model):
+class Testdetails(models.Model):
     id = models.IntegerField(primary_key=True)
     module = models.CharField(max_length=1024,blank=True,null=True)
     classname = models.CharField(max_length=1024,blank=True,null=True)

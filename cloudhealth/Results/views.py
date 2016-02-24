@@ -5,6 +5,8 @@ from django.shortcuts import render
 from Results.models import Tempestresults
 from Results.models import Locations
 from Results.models import Testresults
+from Results.models import Testdetails
+from Results.models import Executiondetails
 # Create your views here.
 #from django.http import HttpResponse
 def tempest_report(request):
@@ -33,3 +35,20 @@ def testresults_report(request):
     for row in rows:
         data.append(row)
     return render_to_response('locations_test.html',{'data':data})
+
+def testdetails_report(request):
+    rows = Testdetails.objects.all()
+    print rows
+    data = []
+    for row in rows:
+        data.append(row)
+    return render_to_response('testdetails.html',{'data':data})
+
+
+def executiondetails_report(request):
+    rows = Executiondetails.objects.all()
+    print rows
+    data = []
+    for row in rows:
+        data.append(row)
+    return render_to_response('executiondetails.html',{'data':data})
