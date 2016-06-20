@@ -25,7 +25,7 @@ TEMPEST_COMMIT_ID="${TEMPEST_COMMIT_ID:-${default_tempest_commit_id}}"
 
 # TLS related options
 REMOTE_CA_CERT="${REMOTE_CA_CERT:-/var/lib/astute/haproxy/public_haproxy.pem}"
-LOCAL_CA_CERT="${LOCAL_CA_CERT:-${USER_HOME_DIR}/public_haproxy.pem}"
+LOCAL_CA_CERT="${LOCAL_CA_CERT:-public_haproxy.pem}"
 
 # Helper functions
 message() {

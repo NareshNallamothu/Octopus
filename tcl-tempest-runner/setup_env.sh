@@ -169,8 +169,10 @@ EOF
     echo "export OS_PUBLIC_IP='${OS_PUBLIC_IP}'" >> ${USER_HOME_DIR}/openrc-$2
     echo "export USER_NAME='${USER_NAME}'" >> ${USER_HOME_DIR}/openrc-$2
     if [ "${TLS_ENABLED}" = "yes" ]; then
-        scp ${CONTROLLER_HOST}:${REMOTE_CA_CERT} ${LOCAL_CA_CERT}
-        echo "export OS_CACERT='${LOCAL_CA_CERT}'" >> ${USER_HOME_DIR}/openrc-$2
+        ssh $1 "scp ${CONTROLLER_HOST}:${REMOTE_CA_CERT} /tmp/${LOCAL_CA_CERT}"
+        scp $1:/tmp/${LOCAL_CA_CERT} ${USER_HOME_DIR}/${LOCAL_CA_CERT}
+        
+        echo "export OS_CACERT='${USER_HOME_DIR}/${LOCAL_CA_CERT}'" >> ${USER_HOME_DIR}/openrc-$2
     fi
 
     chown -R ${USER_NAME} ${USER_HOME_DIR}
@@ -178,7 +180,7 @@ EOF
 
 setup_virtualenv() {
     message "Setup virtualenv in ${VIRTUALENV_DIR}"
-#    virtualenv -p python2.7 ${VIRTUALENV_DIR}
+    virtualenv -p python2.7 ${VIRTUALENV_DIR}
 }
 
 install_tempest() {
@@ -186,14 +188,14 @@ install_tempest() {
 
     cd ${DEST}
     local tempest_dir="${DEST}/tempest"
-    rm -rf ${tempest_dir}
-#   if [ ! -d ${tempest_dir}];then
+#    rm -rf ${tempest_dir}
+   if [ ! -d ${tempest_dir}];then
        git clone git://git.openstack.org/openstack/tempest.git
- #  fi
+   fi
     cd ${tempest_dir}
-#    if [ "${TEMPEST_COMMIT_ID}" != "master" ]; then
-#        git checkout ${TEMPEST_COMMIT_ID}
-#    fi
+    if [ "${TEMPEST_COMMIT_ID}" != "master" ]; then
+        git checkout ${TEMPEST_COMMIT_ID}
+    fi
 
     ${VIRTUALENV_DIR}/bin/pip install -U -r ${tempest_dir}/requirements.txt
     message "Tempest has been installed into ${tempest_dir}"

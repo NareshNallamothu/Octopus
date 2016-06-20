@@ -47,7 +47,7 @@ run_tests() {
 
     SUBUNIT_STREAM=$(cat .testrepository/next-stream)
 
-    local testr_params="--parallel"
+    local testr_params=""
     if [ "${SERIAL}" = "true" ]; then
         testr_params=""
     fi
@@ -106,7 +106,7 @@ run() {
     run_tests "$@"
     collect_results "$@" 
 
-    resource_clean "$@"
+   # resource_clean "$@"
 
     cd ${TOP_DIR}
 }

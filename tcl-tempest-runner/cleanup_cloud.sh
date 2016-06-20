@@ -44,17 +44,19 @@ restore_service_catalog() {
    # local identity_service_id="$(keystone_adm service-list | grep identity | awk '{print $2}')"
    # local old_endpoint="$(keystone_adm endpoint-list | grep ${identity_service_id}|awk '{print $2}')"
    # local internal_url="$(ssh ${CONTROLLER_HOST} ". openrc; keystone catalog --service identity 2>/dev/null | grep internalURL | awk '{print \$4}'")"
-    local identity_service_id="$(ssh $1 "ssh ${CONTROLLER_HOST} '. openrc ;keystone --os-token ${ADMIN_TOKEN} --os-endpoint ${OS_PUBLIC_AUTH_URL} service-list  2>/dev/null | grep identity'" | awk '{print $2}')"
-    local old_endpoint="$(ssh $1 "ssh ${CONTROLLER_HOST} '.openrc ; keystone --os-token ${ADMIN_TOKEN} --os-endpoint ${OS_PUBLIC_AUTH_URL} endpoint-list 2>/dev/null |grep ${identity_service_id}" | awk '{print $2}')"
-
-    local internal_url="$(ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone --os-token ${ADMIN_TOKEN} --os-endpoint ${OS_PUBLIC_AUTH_URL} catalog --service identity 2>/dev/null | grep internalURL'" | awk '{print $4}')"
+    local identity_service_id="$(ssh $1 "ssh ${CONTROLLER_HOST} '. openrc ;keystone  service-list  2>/dev/null | grep identity'" | awk '{print $2}')"
+    message "identity token is ${identity_service_id}"
+    local old_endpoint="$(ssh $1 "ssh ${CONTROLLER_HOST} '. openrc ; keystone endpoint-list 2>/dev/null | grep ${identity_service_id}'" | awk '{print $2}')"
+    message "old endpont is ${old_endpoint}"
+    local internal_url="$(ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone  catalog --service identity 2>/dev/null | grep internalURL'" | awk '{print $4}')"
+    message "internalURL is ${internal_url}"
    # local admin_url="$(ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone endpoint-list  2>/dev/null | grep ${identity_service_id}'" | awk '{print $10}')"
 
-   ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone --os-token ${ADMIN_TOKEN} --os-endpoint ${OS_PUBLIC_AUTH_URL} endpoint--create --region RegionOne --service ${identity_service_id} --publicurl ${OS_PUBLIC_AUTH_URL} --adminurl ${OS_PUBLIC_AUTH_URL/5000/35357} --internalurl ${internal_url}  2>/dev/null' "
+   ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone  endpoint-create --region RegionOne --service ${identity_service_id} --publicurl ${OS_PUBLIC_AUTH_URL} --adminurl ${internal_url/5000/35357} --internalurl ${internal_url}  2>/dev/null' "
 
    # keystone_adm endpoint-create --region RegionOne --service ${identity_service_id} --publicurl ${OS_PUBLIC_AUTH_URL} --adminurl ${internal_url/5000/35357} --internalurl ${internal_url} 2>/dev/null
     if [ ! -z ${old_endpoint} ]; then
-        ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone --os-token ${ADMIN_TOKEN} --os-endpoint ${OS_PUBLIC_AUTH_URL} endpoint-delete ${old_endpoint} 2>/dev/null' "
+        ssh $1 "ssh ${CONTROLLER_HOST} '. openrc; keystone  endpoint-delete ${old_endpoint} 2>/dev/null' "
         #keystone_adm endpoint-delete ${old_endpoint} 2>/dev/null
     fi
 }
