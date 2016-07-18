@@ -12,7 +12,7 @@ init_variables() {
 local  env_id="$( ssh $1 "fuel env | grep $2  | awk '{print \$1}'")"
 message "${env_id}"
 
-local controller_ip="$(ssh $1 "fuel --env-id $env_id  node list | grep controller | awk '{print \$10}'")"
+local controller_ip="$(ssh $1 "fuel --env-id $env_id  node list | grep controller | awk '{print \$10}' | head -1")"
 message "$controller_ip" 
 #local controller_host_id="$(fuel node "$@" | grep controller | awk '{print $1}' | head -1)"
 CONTROLLER_HOST=${controller_ip}

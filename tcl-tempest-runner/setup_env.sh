@@ -62,7 +62,7 @@ init_cluster_variables() {
 
    message "${env_id}"
 
-  local controller_ip="$(ssh $1 "fuel --env-id $env_id  node list | grep controller | awk '{print \$10}'")"
+  local controller_ip="$(ssh $1 "fuel --env-id $env_id  node list | grep controller | awk '{print \$10}' | head -1")"
 
   message "$controller_ip"
 
@@ -242,7 +242,7 @@ add_public_bind_to_keystone_haproxy_conf_for_admin_port() {
     message "Add public bind to Keystone haproxy config for admin port on all controllers"
     if [ ! "$(ssh $1 "ssh ${CONTROLLER_HOST} 'grep ${OS_PUBLIC_IP}:35357 ${KEYSTONE_HAPROXY_CONFIG_PATH}')")" ]; then
         local  env_id="$( ssh $1 "fuel env | grep $2  | awk '{print \$1}'")"
-        local controller_node_ids="$(ssh $1 "fuel --env-id $env_id  node list | grep controller | awk '{print \$10}'")"
+        local controller_node_ids="$(ssh $1 "fuel --env-id $env_id  node list | grep controller | awk '{print \$10}' | head -1")"
        # local controller_node_ids=$(ssh $1 "(fuel node | grep controller | awk '{print \$1}')")
         local bind_string="  bind ${OS_PUBLIC_IP}:35357"
         if [ "${TLS_ENABLED}" = "yes" ]; then
